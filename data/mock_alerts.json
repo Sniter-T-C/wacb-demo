@@ -1,0 +1,114 @@
+{
+  "dataset": {
+    "name": "mock_alerts",
+    "version": "1.0.0",
+    "label": "MOCK",
+    "generated_at": "2026-10-27T09:05:00Z",
+    "description": "Conjunto de alertas ficticias para demostración del flujo de dossier de compliance cripto.",
+    "disclaimer": "MOCK: todos los nombres, direcciones, transacciones y entidades son ficticios. No corresponden a personas, organizaciones ni fondos reales."
+  },
+  "alerts": [
+    {
+      "alert_id": "MOCK-PB-2026-0001",
+      "label": "MOCK",
+      "typology": "pig_butchering",
+      "detected_at": "2026-10-27T09:00:00Z",
+      "deadline_48h": "2026-10-29T09:00:00Z",
+      "score": 87,
+      "confidence": 0.86,
+      "subject": {
+        "entity": "Fictitious Crypto Wealth Partners (MOCK)",
+        "jurisdiction": "Isla Ficticia (MOCK)",
+        "risk_flags": [
+          "Interacciones reiteradas con direcciones sancionadas (mock)",
+          "Patrón de fraude romántico con inversión falsa (mock)",
+          "Uso de múltiples cuentas de retiro en exchanges (mock)"
+        ]
+      },
+      "onchain": {
+        "chains": [
+          "MOCK-ETH",
+          "MOCK-TRC20"
+        ],
+        "addresses": [
+          {
+            "address": "0xMOCK000000000000000000000000000000000A1",
+            "chain": "MOCK-ETH",
+            "role": "depósito",
+            "risk": "alta"
+          },
+          {
+            "address": "0xMOCK000000000000000000000000000000000A2",
+            "chain": "MOCK-ETH",
+            "role": "consolidación",
+            "risk": "alta"
+          },
+          {
+            "address": "TMOCK000000000000000000000000000A3",
+            "chain": "MOCK-TRC20",
+            "role": "retiro",
+            "risk": "crítica"
+          }
+        ],
+        "transactions": [
+          {
+            "hash": "0xmock-tx-0001",
+            "chain": "MOCK-ETH",
+            "asset": "MOCK-USDT",
+            "amount": 95000.0,
+            "usd_value": 95000.0,
+            "direction": "entrada",
+            "timestamp": "2026-10-25T14:12:00Z",
+            "counterparty": "0xMOCK000000000000000000000000000000000V1"
+          },
+          {
+            "hash": "0xmock-tx-0002",
+            "chain": "MOCK-ETH",
+            "asset": "MOCK-USDT",
+            "amount": 137500.0,
+            "usd_value": 137500.0,
+            "direction": "entrada",
+            "timestamp": "2026-10-26T10:40:00Z",
+            "counterparty": "0xMOCK000000000000000000000000000000000V2"
+          },
+          {
+            "hash": "mock-tx-0003",
+            "chain": "MOCK-TRC20",
+            "asset": "MOCK-USDT",
+            "amount": 180000.0,
+            "usd_value": 180000.0,
+            "direction": "salida",
+            "timestamp": "2026-10-26T18:05:00Z",
+            "counterparty": "TMOCK000000000000000000000000000A3"
+          }
+        ],
+        "total_volume_usd": 412500.0,
+        "notes": "Los fondos se fragmentan entre billeteras de depósito y consolidación antes del retiro final (mock)."
+      },
+      "modus_operandi": {
+        "summary": "Un supuesto asesor financiero contacta a la víctima por una aplicación de citas, construye una relación de confianza durante semanas y la dirige a una plataforma de inversión ficticia que muestra rendimientos irreales. Los retiros se bloquean mediante supuestas comisiones fiscales y los fondos se consolidan en billeteras controladas por el grupo.",
+        "stages": [
+          "Captación y creación de confianza en redes sociales y aplicaciones de citas (mock).",
+          "Migración del contacto a una aplicación de mensajería privada (mock).",
+          "Presentación de una plataforma de inversión ficticia con ganancias simuladas (mock).",
+          "Solicitud de depósitos crecientes y bloqueo de retiros con excusas de impuestos o comisiones (mock).",
+          "Consolidación y retiro de fondos a través de billeteras y exchanges (mock)."
+        ],
+        "red_flags": [
+          "Rendimientos garantizados y superiores al 15% mensual (mock).",
+          "Presión para depositar en plazos muy cortos (mock).",
+          "Solicitud de comisiones anticipadas para liberar retiros (mock).",
+          "Identidad del asesor no verificable de forma independiente (mock)."
+        ]
+      },
+      "narrative": "Alerta MOCK diseñada para probar el flujo de ingestión y generación del dossier. No describe un caso real.",
+      "recommended_actions": [
+        "Preservar la evidencia de conversaciones, transferencias y capturas de la plataforma (mock).",
+        "Solicitar a los exchanges implicados la identificación de los beneficiarios finales (mock).",
+        "Evaluar el congelamiento preventivo de las direcciones señaladas (mock).",
+        "Escalar el caso a la unidad de fraude y al equipo legal para evaluar reporte regulatorio (mock).",
+        "Contactar a la víctima por un canal verificado y ofrecer acompañamiento (mock)."
+      ]
+    }
+  ]
+}
