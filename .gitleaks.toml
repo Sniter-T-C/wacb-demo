@@ -1,0 +1,28 @@
+title = "E-quality gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "telegram-bot-token"
+description = "Telegram Bot API token"
+regex = '''\b[0-9]{8,10}:[A-Za-z0-9_-]{35}\b'''
+tags = ["telegram", "api-key"]
+
+[[rules]]
+id = "whatsapp-access-token"
+description = "Meta/WhatsApp access token"
+regex = '''\bEAA[A-Za-z0-9]{80,}\b'''
+tags = ["whatsapp", "api-key"]
+
+[allowlist]
+description = "Example values, placeholders and test fixtures"
+paths = [
+  '''(^|/)\.env\.example$''',
+  '''(^|/)tests?/fixtures?/''',
+  '''(^|/)docs?/examples?/''',
+]
+regexes = [
+  '''YOUR_[A-Z0-9_]+''',
+  '''(?i)(changeme|replace[-_ ]?me|placeholder)''',
+]
