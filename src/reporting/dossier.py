@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from collections.abc import Mapping
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 from ..ingest.loader import ALARM_WINDOW, MOCK_LABEL, REQUIRED_ALERT
 
@@ -83,7 +84,7 @@ def build_dossier(
         f"| Vencimiento | {_fmt_datetime(deadline)} |",
         f"| Referencia | {_fmt_datetime(reference)} |",
         f"| Estado | {alarm_state} |",
-        f"| Ventana | 48 h desde la detección |",
+        "| Ventana | 48 h desde la detección |",
         f"| Score | {score}/100 ({band}) |",
         "",
         "## 3. Resumen on-chain (MOCK)",
@@ -243,7 +244,7 @@ def _parse_datetime(value: Any, field: str) -> datetime:
 
     if parsed.tzinfo is None:
         raise ValueError(f"{field}: el timestamp debe incluir zona horaria.")
-    return parsed.astimezone(timezone.utc)
+    return parsed.astimezone(UTC)
 
 
 def _format_timestamp_value(value: Any) -> str:

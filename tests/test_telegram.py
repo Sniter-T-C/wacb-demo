@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
-import requests
 import pytest
+import requests
 
 from notifiers.base import Notifier
 from notifiers.telegram import TelegramNotifier, parse_chat_ids

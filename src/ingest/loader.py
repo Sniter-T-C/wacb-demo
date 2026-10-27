@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timedelta, timezone
+from collections.abc import Iterable, Mapping, Sequence
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any
 
 MOCK_LABEL = "MOCK"
 ALARM_WINDOW = timedelta(hours=48)
@@ -308,7 +309,7 @@ def _timestamp_field(
         errors.append(f"{path}.{key}: el timestamp debe incluir zona horaria.")
         return None
 
-    return parsed.astimezone(timezone.utc)
+    return parsed.astimezone(UTC)
 
 
 def _object_field(
