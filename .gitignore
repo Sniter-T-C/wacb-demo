@@ -1,5 +1,12 @@
-# Environment
+# Environment and secrets
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+secrets/
+credentials/
 
 # Generated artifacts
 output/
@@ -10,13 +17,22 @@ __pycache__/
 *.egg-info/
 .venv/
 venv/
+env/
+dist/
+build/
 
 # Local configuration
 recipients.yaml
 
-# Tooling
+# Tooling and coverage
 .pytest_cache/
-.mypy_cache/
 .ruff_cache/
+.mypy_cache/
 .coverage
 htmlcov/
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
