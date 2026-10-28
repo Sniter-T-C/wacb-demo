@@ -7,10 +7,10 @@ from datetime import datetime, timezone
 from typing import Any, Mapping
 
 RISK_BANDS = (
-    (20, "Bajo"),
-    (50, "Medio"),
-    (75, "Alto"),
-    (100, "Crítico"),
+    (20, "Low"),
+    (50, "Medium"),
+    (75, "High"),
+    (100, "Critical"),
 )
 
 
