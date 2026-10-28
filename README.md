@@ -1,70 +1,70 @@
 # WACB — Web3 Alert Compliance Bot
 
-Herramienta de código abierto para la **pre-investigación y el triaje de alertas Web3**. Recibe alertas de múltiples fuentes, las enriquece con contexto on-chain y de listas de riesgo, y genera un reporte listo para revisión humana en minutos, no en días.
+An open-source tool for the **pre-investigation and triage of Web3 alerts**. It ingests alerts from multiple sources, enriches them with on-chain and risk-list context, and produces a report ready for human review in minutes rather than days.
 
-> **Estado:** alpha. Adecuada para evaluación, laboratorios y equipos de compliance que quieran automatizar el trabajo repetitivo del triaje. No es un producto de producción ni un sustituto de un proveedor de análisis de blockchain.
-
----
-
-## El problema de negocio
-
-### La ventana crítica de 48 horas
-
-En el ecosistema Web3, una alerta de riesgo pierde valor muy rápido. Los fondos pueden moverse entre decenas de direcciones en cuestión de horas, pasar por *mixers*, *bridges* o *exchanges* con procesos KYC distintos, y salir de la jurisdicción relevante antes de que un analista termine de abrir el caso.
-
-Las obligaciones de reporte y las políticas internas de muchas entidades (procedimientos AML/CFT, requisitos de la *Travel Rule*, gestión de sanciones) presionan además con plazos operativos que, en la práctica, se concentran en **las primeras 48 horas** desde la detección. Pasado ese margen:
-
-- La trazabilidad se degrada y el costo de reconstruir el flujo aumenta.
-- Se pierden oportunidades de bloqueo, congelamiento o escalado oportuno.
-- Aumenta el riesgo regulatorio y reputacional por respuestas tardías.
-- El equipo pierde contexto sobre por qué se generó la alerta.
-
-### El triaje manual no escala
-
-Hoy el triaje suele ser un proceso artesanal:
-
-1. Un analista recibe una alerta por correo, Slack o un panel.
-2. Abre manualmente varios exploradores de bloques, listas de sanciones, registros de *mixers* y bases internas.
-3. Copia y pega direcciones, hashes y montos en una hoja de cálculo.
-4. Escribe un resumen desde cero, a menudo sin plantilla ni criterios homogéneos.
-5. Decide si escala, cierra o solicita más información.
-
-Este flujo tiene tres problemas estructurales: **latencia** (cada caso consume entre 30 y 90 minutos), **inconsistencia** (dos analistas llegan a conclusiones distintas con la misma evidencia) y **fatiga de alertas** (el volumen de falsos positivos hace que las señales reales se entierren).
-
-WACB ataca la parte mecánica de ese trabajo: recolecta, normaliza y enriquece la evidencia, y entrega un borrador de reporte estructurado. **La decisión final sigue siendo humana.**
+> **Status:** alpha. Suitable for evaluation, labs, and compliance teams looking to automate the repetitive work of triage. It is not a production product and not a substitute for a blockchain analytics provider.
 
 ---
 
-## Cómo funciona
+## The business problem
+
+### The critical 48-hour window
+
+In the Web3 ecosystem, a risk alert loses value very quickly. Funds can move across dozens of addresses within hours, pass through *mixers*, *bridges*, or *exchanges* with different KYC processes, and leave the relevant jurisdiction before an analyst has even finished opening the case.
+
+Reporting obligations and the internal policies of many entities (AML/CFT procedures, *Travel Rule* requirements, sanctions management) also impose operational deadlines that, in practice, cluster around **the first 48 hours** after detection. Once that window closes:
+
+- Traceability degrades and the cost of reconstructing the flow increases.
+- Opportunities for blocking, freezing, or timely escalation are lost.
+- Regulatory and reputational risk grows due to delayed responses.
+- The team loses context about why the alert was generated in the first place.
+
+### Manual triage does not scale
+
+Today, triage is typically a handcrafted process:
+
+1. An analyst receives an alert by email, Slack, or a dashboard.
+2. They manually open several block explorers, sanctions lists, *mixer* registries, and internal databases.
+3. They copy and paste addresses, hashes, and amounts into a spreadsheet.
+4. They write a summary from scratch, often without a template or consistent criteria.
+5. They decide whether to escalate, close, or request more information.
+
+This workflow has three structural problems: **latency** (each case takes 30 to 90 minutes), **inconsistency** (two analysts reach different conclusions from the same evidence), and **alert fatigue** (the volume of false positives buries the real signals).
+
+WACB targets the mechanical part of that work: it collects, normalizes, and enriches the evidence, then delivers a structured draft report. **The final decision remains human.**
+
+---
+
+## How it works
 
 ```mermaid
 flowchart LR
-    subgraph INGESTA["1. Ingesta"]
-        A1[Webhooks y colas]
-        A2[CSV / JSON de proveedores]
-        A3[Consultas programadas]
+    subgraph INGESTION["1. Ingestion"]
+        A1[Webhooks and queues]
+        A2[Provider CSV / JSON]
+        A3[Scheduled queries]
     end
 
-    subgraph ENRIQUECIMIENTO["2. Enriquecimiento"]
-        B1[Normalización de entidades]
-        B2[Contexto on-chain]
-        B3[Listas de sanciones y riesgo]
-        B4[Correlación y scoring]
+    subgraph ENRICHMENT["2. Enrichment"]
+        B1[Entity normalization]
+        B2[On-chain context]
+        B3[Sanctions and risk lists]
+        B4[Correlation and scoring]
     end
 
-    subgraph REPORTE["3. Reporte"]
-        C1[Plantilla de caso]
-        C2[Evidencia y hashes]
-        C3[Nivel de severidad sugerido]
+    subgraph REPORTING["3. Reporting"]
+        C1[Case template]
+        C2[Evidence and hashes]
+        C3[Suggested severity level]
     end
 
-    subgraph NOTIFICACION["4. Notificación"]
-        D1[Salida local / artefacto]
-        D2[Cola de revisión]
-        D3[Webhook saliente]
+    subgraph NOTIFICATION["4. Notification"]
+        D1[Local output / artifact]
+        D2[Review queue]
+        D3[Outbound webhook]
     end
 
-    H[Revisión y decisión humana]
+    H[Human review and decision]
 
     A1 --> B1
     A2 --> B1
@@ -83,60 +83,60 @@ flowchart LR
     D3 --> H
 ```
 
-Cada etapa es idempotente y deja trazas auditables: qué se ingirió, qué se consultó, qué reglas se aplicaron y qué severidad se sugirió. El reporte generado es un **borrador de trabajo**, no un dictamen.
+Each stage is idempotent and leaves auditable traces: what was ingested, what was queried, which rules were applied, and which severity was suggested. The generated report is a **working draft**, not a determination.
 
-### Etapas
+### Stages
 
-| Etapa | Qué hace | Resultado |
+| Stage | What it does | Output |
 | --- | --- | --- |
-| Ingesta | Recibe alertas de webhooks, ficheros o consultas programadas y valida el esquema. | Alerta normalizada y encolada |
-| Enriquecimiento | Resuelve direcciones, consulta fuentes de riesgo, correlaciona entidades y calcula un score. | Evidencia consolidada con procedencia |
-| Reporte | Rellena una plantilla de caso con hechos, evidencia, huecos de información y severidad sugerida. | Reporte en Markdown/JSON |
-| Notificación | Publica el reporte como artefacto, lo encola para revisión o lo envía por webhook. | Caso listo para un analista |
+| Ingestion | Receives alerts from webhooks, files, or scheduled queries and validates the schema. | Normalized, queued alert |
+| Enrichment | Resolves addresses, queries risk sources, correlates entities, and computes a score. | Consolidated evidence with provenance |
+| Reporting | Populates a case template with facts, evidence, information gaps, and suggested severity. | Markdown/JSON report |
+| Notification | Publishes the report as an artifact, queues it for review, or sends it via webhook. | Case ready for an analyst |
 
 ---
 
-## Requisitos
+## Requirements
 
-- **Docker** y **Docker Compose** (recomendado), o
-- **Python 3.11+** y **GNU Make** para ejecución local sin contenedores
-- Sin claves de API obligatorias para la demo: los datos de ejemplo y las fuentes simuladas funcionan offline
+- **Docker** and **Docker Compose** (recommended), or
+- **Python 3.11+** and **GNU Make** for local execution without containers
+- No mandatory API keys for the demo: sample data and mocked sources work offline
 
-> En Windows, ejecuta los comandos desde WSL2, Git Bash o un entorno con `make` disponible.
+> On Windows, run the commands from WSL2, Git Bash, or an environment with `make` available.
 
 ---
 
-## Inicio rápido
+## Quick start
 
 ```bash
-git clone https://github.com/<tu-organizacion>/wacb.git
+git clone https://github.com/<your-organization>/wacb.git
 cd wacb
-cp .env.example .env    # opcional: ajusta configuración local
+cp .env.example .env    # optional: adjust local configuration
 make run-demo
 ```
 
 ### `make run-demo`
 
-Levanta el pipeline completo con un conjunto de alertas de ejemplo y fuentes simuladas. No requiere red ni credenciales.
+Spins up the full pipeline against a set of sample alerts and mocked sources. No network access or credentials required.
 
-Qué hace:
+What it does:
 
-1. Construye la imagen o prepara el entorno virtual.
-2. Carga las alertas de `demo/fixtures/` en la cola de ingesta.
-3. Ejecuta ingesta, enriquecimiento y generación de reportes de extremo a extremo.
-4. Deja los resultados en `out/demo/` (reportes en Markdown y JSON, más un resumen en consola).
-5. Termina con código de salida `0` si todos los casos se procesaron.
+1. Builds the image or prepares the virtual environment.
+2. Loads the alerts from `demo/fixtures/` into the ingestion queue.
+3. Runs ingestion, enrichment, and report generation end to end.
+4. Writes the results to `out/demo/` (Markdown and JSON reports, plus a console summary).
+5. Exits with code `0` if every case was processed.
 
 ```bash
 make run-demo
 
-# Salida esperada (resumen)
-# Casos procesados: 12
-# Severidad sugerida: 2 alta, 5 media, 5 baja
-# Reportes: out/demo/reports/
+# Expected output (summary)
+# Cases processed: 12
+# Suggested severity: 2 high, 5 medium, 5 low
+# Reports: out/demo/reports/
 ```
 
-Puedes inspeccionar un reporte generado:
+You can inspect a generated report:
 
 ```bash
 cat out/demo/reports/case-0001.md
@@ -144,21 +144,21 @@ cat out/demo/reports/case-0001.md
 
 ### `make test`
 
-Ejecuta la suite de pruebas: unitarias, de contrato y de integración con *fixtures* locales. No realiza llamadas de red ni consume cuotas de proveedores.
+Runs the test suite: unit, contract, and integration tests against local *fixtures*. It performs no network calls and consumes no provider quotas.
 
 ```bash
 make test
 ```
 
-Cubre, entre otros:
+It covers, among other things:
 
-- Validación y normalización de alertas de entrada.
-- Reglas de enriquecimiento y cálculo de score con datos simulados.
-- Renderizado de la plantilla de reporte.
-- Idempotencia del pipeline y manejo de errores por etapa.
-- Contratos de salida (JSON estable para consumidores downstream).
+- Validation and normalization of incoming alerts.
+- Enrichment rules and score computation with mocked data.
+- Rendering of the report template.
+- Pipeline idempotency and per-stage error handling.
+- Output contracts (stable JSON for downstream consumers).
 
-Para un subconjunto rápido durante el desarrollo:
+For a quick subset during development:
 
 ```bash
 make test-unit
@@ -166,77 +166,77 @@ make test-unit
 
 ---
 
-## Configuración
+## Configuration
 
-La configuración se lee de variables de entorno (`.env` en local). No se requieren credenciales para la demo.
+Configuration is read from environment variables (`.env` locally). No credentials are required for the demo.
 
-| Variable | Descripción | Por defecto |
+| Variable | Description | Default |
 | --- | --- | --- |
-| `WACB_ENV` | Entorno de ejecución (`dev`, `demo`, `test`) | `dev` |
-| `WACB_INPUT_DIR` | Directorio de entrada para ingesta basada en ficheros | `demo/fixtures` |
-| `WACB_OUTPUT_DIR` | Directorio de reportes y artefactos | `out` |
-| `WACB_PROVIDER_MODE` | `mock` para fuentes simuladas, `live` para integraciones reales | `mock` |
-| `WACB_LOG_LEVEL` | Nivel de log (`debug`, `info`, `warn`, `error`) | `info` |
+| `WACB_ENV` | Runtime environment (`dev`, `demo`, `test`) | `dev` |
+| `WACB_INPUT_DIR` | Input directory for file-based ingestion | `demo/fixtures` |
+| `WACB_OUTPUT_DIR` | Directory for reports and artifacts | `out` |
+| `WACB_PROVIDER_MODE` | `mock` for simulated sources, `live` for real integrations | `mock` |
+| `WACB_LOG_LEVEL` | Log level (`debug`, `info`, `warn`, `error`) | `info` |
 
-Nunca incluyas claves de API reales en el repositorio. Usa `.env` local o el gestor de secretos de tu organización.
+Never commit real API keys to the repository. Use a local `.env` file or your organization's secrets manager.
 
 ---
 
-## Estructura del repositorio
+## Repository structure
 
 ```text
 .
-├── demo/                 # Datos y escenarios de demostración
-│   └── fixtures/         # Alertas de ejemplo
-├── docs/                 # Documentación de arquitectura y criterios de triaje
-├── src/                  # Código fuente
-│   ├── ingest/           # Conectores de entrada
-│   ├── enrich/           # Normalización, fuentes y scoring
-│   ├── report/           # Plantillas y renderizado
-│   └── notify/           # Salidas y webhooks
-├── tests/                # Pruebas unitarias y de integración
+├── demo/                 # Demo data and scenarios
+│   └── fixtures/         # Sample alerts
+├── docs/                 # Architecture documentation and triage criteria
+├── src/                  # Source code
+│   ├── ingest/           # Inbound connectors
+│   ├── enrich/           # Normalization, sources, and scoring
+│   ├── report/           # Templates and rendering
+│   └── notify/           # Outputs and webhooks
+├── tests/                # Unit and integration tests
 ├── Makefile
 └── README.md
 ```
 
 ---
 
-## Aviso legal
+## Legal notice
 
-**WACB es una herramienta de apoyo a la pre-investigación y al triaje. No es un producto de análisis forense de blockchain ni una solución de cumplimiento llave en mano.**
+**WACB is a pre-investigation and triage support tool. It is not a blockchain forensics product and not a turnkey compliance solution.**
 
-- **No reemplaza a Chainalysis, Elliptic ni a ningún otro proveedor de análisis de blockchain.** WACB no pretende sustituir sus capacidades de atribución, clustering, monitoreo continuo ni cobertura de datos. Si tu organización depende de esos proveedores para decisiones regulatorias, WACB debe usarse como complemento, nunca como sustituto.
-- **Requiere decisión humana.** Las severidades, scores y reportes generados son sugerencias automatizadas basadas en reglas y datos disponibles. Ningún resultado debe interpretarse como una conclusión definitiva. Un analista cualificado debe revisar la evidencia, validar las fuentes y decidir si escala, cierra o reporta el caso.
-- **No constituye asesoramiento legal, financiero ni regulatorio.** La herramienta no presenta reportes a autoridades ni cumple por sí misma obligaciones AML/CFT, de sanciones o de la *Travel Rule*.
-- **Los datos pueden ser incompletos o estar desactualizados.** La calidad del resultado depende de las fuentes configuradas y de su latencia. Verifica siempre contra la fuente primaria.
-- **Sin garantías.** El software se distribuye "tal cual", sin garantía de exactitud, disponibilidad o idoneidad para un fin concreto. El uso y las decisiones derivadas son responsabilidad exclusiva de la entidad usuaria.
-
----
-
-## Extensiones futuras
-
-Estas capacidades están en el roadmap y **no forman parte de la versión actual**:
-
-- **Notificaciones vía WhatsApp Cloud API.** Envío de resúmenes de caso y solicitudes de decisión a analistas mediante la API oficial de Meta, con plantillas aprobadas y trazabilidad de entrega.
-- **Enrutamiento por severidad.** Distribución automática de casos según el nivel sugerido: alertas altas a revisión inmediata, medias a cola estándar y bajas a muestreo o cierre asistido, con escalado y *timeouts* configurables.
-- **Conectores adicionales** para proveedores de riesgo y exploradores, con interfaz de plugin.
-- **Panel de revisión** con historial de decisiones y métricas de tiempo de triaje.
-- **Exportación de casos** a formatos compatibles con flujos internos de compliance.
-
-Las contribuciones en estas direcciones son bienvenidas; abre un *issue* para discutir el diseño antes de enviar un *pull request* grande.
+- **It does not replace Chainalysis, Elliptic, or any other blockchain analytics provider.** WACB does not aim to substitute for their attribution, clustering, continuous monitoring, or data coverage capabilities. If your organization relies on those providers for regulatory decisions, WACB must be used as a complement, never as a replacement.
+- **It requires human judgment.** The severities, scores, and reports generated are automated suggestions based on rules and available data. No result should be interpreted as a definitive conclusion. A qualified analyst must review the evidence, validate the sources, and decide whether to escalate, close, or report the case.
+- **It does not constitute legal, financial, or regulatory advice.** The tool does not file reports with authorities and does not by itself satisfy AML/CFT, sanctions, or *Travel Rule* obligations.
+- **Data may be incomplete or out of date.** The quality of the output depends on the configured sources and their latency. Always verify against the primary source.
+- **No warranties.** The software is distributed "as is", without warranty of accuracy, availability, or fitness for a particular purpose. Use of the software and any decisions derived from it are the sole responsibility of the user entity.
 
 ---
 
-## Contribuir
+## Future extensions
 
-1. Abre un *issue* describiendo el problema o la propuesta.
-2. Crea una rama desde `main`.
-3. Añade pruebas para los cambios de comportamiento.
-4. Ejecuta `make test` y asegúrate de que pasa.
-5. Envía un *pull request* con una descripción clara del cambio y su motivación.
+These capabilities are on the roadmap and are **not part of the current version**:
+
+- **WhatsApp Cloud API notifications.** Sending case summaries and decision requests to analysts through Meta's official API, with approved templates and delivery traceability.
+- **Severity-based routing.** Automatic distribution of cases according to the suggested level: high alerts to immediate review, medium alerts to the standard queue, and low alerts to sampling or assisted closure, with configurable escalation and *timeouts*.
+- **Additional connectors** for risk providers and explorers, with a plugin interface.
+- **Review dashboard** with decision history and triage time metrics.
+- **Case export** to formats compatible with internal compliance workflows.
+
+Contributions in these directions are welcome; open an *issue* to discuss the design before submitting a large *pull request*.
 
 ---
 
-## Licencia
+## Contributing
 
-MIT. Consulta el archivo `LICENSE` para el texto completo.
+1. Open an *issue* describing the problem or proposal.
+2. Create a branch from `main`.
+3. Add tests for behavioral changes.
+4. Run `make test` and make sure it passes.
+5. Submit a *pull request* with a clear description of the change and its rationale.
+
+---
+
+## License
+
+MIT. See the `LICENSE` file for the full text.
