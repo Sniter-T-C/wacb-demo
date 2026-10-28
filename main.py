@@ -72,25 +72,22 @@ def build_notification(alert: Mapping[str, Any], dossier_path: Path) -> str:
     enrichment = alert.get("enrichment") or {}
     subject = alert.get("subject") or {}
     remaining = enrichment.get("hours_to_deadline")
-    if remaining is None:
-        deadline_state = "desconocido"
-    elif remaining > 0:
-        deadline_state = f"quedan {remaining} h"
-    else:
-        deadline_state = f"vencida hace {abs(remaining)} h"
+    hours = "unknown" if remaining is None else remaining
 
     return "\n".join(
         [
-            "WACB — Nueva alerta MOCK",
+            "WACB — New MOCK Alert",
             f"ID: {alert.get('alert_id')}",
-            f"Tipología: {alert.get('typology')}",
+            f"Typology: {alert.get('typology')}",
             f"Score: {alert.get('score')}/100 ({enrichment.get('risk_band', '—')})",
-            f"Entidad: {subject.get('entity', '—')}",
-            f"Jurisdicción: {subject.get('jurisdiction', '—')}",
-            f"Ventana 48 h: {deadline_state}",
+            f"Entity: {subject.get('entity', '—')}",
+            f"Jurisdiction: {subject.get('jurisdiction', '—')}",
+            f"48h window: {hours} hours left",
             f"Dossier: {dossier_path}",
             "",
-            "Datos ficticios (MOCK). Requiere revisión humana.",
+            "Fake data (MOCK). Requires human review.",
+            "",
+            "⚡ Powered by PhishNet | 30+ scams caught.",
         ]
     )
 
