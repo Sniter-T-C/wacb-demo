@@ -82,6 +82,10 @@ flowchart LR
     D2 --> H
     D3 --> H
 ```
+### Demo
+
+![Telegram Notification](img/telegram_demo.png)
+<img width="1079" height="1249" alt="WACB DEMO" src="https://github.com/user-attachments/assets/27c7257d-3167-4290-a22f-de9593b79d18" />
 
 Each stage is idempotent and leaves auditable traces: what was ingested, what was queried, which rules were applied, and which severity was suggested. The generated report is a **working draft**, not a determination.
 
