@@ -170,7 +170,7 @@ def build_dossier(
             "",
             f"`{bar}`",
             "",
-            "Escala: 1-20 Low · 21-50 Medium · 51-75 High · 76-100 Critical.",
+            "Escala: 1-20 Bajo · 21-50 Medio · 51-75 Alto · 76-100 Crítico.",
             "",
             "## 6. Recomendación operativa",
             "",
@@ -223,12 +223,12 @@ def write_dossier(
 
 def _score_band(score: int) -> str:
     if score <= 20:
-        return "Low"
+        return "Bajo"
     if score <= 50:
-        return "Medium"
+        return "Medio"
     if score <= 75:
-        return "High"
-    return "Critical"
+        return "Alto"
+    return "Crítico"
 
 
 def _parse_datetime(value: Any, field: str) -> datetime:

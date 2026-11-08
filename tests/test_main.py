@@ -27,7 +27,7 @@ def test_demo_runs_and_creates_output(tmp_path: Path) -> None:
 
 def test_check_environment_reports_expected_keys() -> None:
     status = check_environment()
-    assert set(status) == {"TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_IDS", "ETHERSCAN_API_KEY"}
+    assert set(status) == {"TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_IDS"}
 
 
 def test_demo_sends_telegram_notification(tmp_path: Path, monkeypatch) -> None:
@@ -52,6 +52,9 @@ def test_demo_sends_telegram_notification(tmp_path: Path, monkeypatch) -> None:
     assert exit_code == 0
     assert len(sent) == 1
     assert "MOCK-PB-2026-0001" in sent[0]
+    assert "New MOCK alert" in sent[0]
+    assert "Nueva alerta" not in sent[0]
+    assert "⚡ Powered by PhishNet | 30+ scams caught." in sent[0]
 
 
 def test_demo_fails_without_telegram_credentials(tmp_path: Path, monkeypatch) -> None:

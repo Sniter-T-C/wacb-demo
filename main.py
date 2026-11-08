@@ -23,7 +23,6 @@ DEFAULT_DATASET = DATA_DIR / "mock_alerts.json"
 REQUIRED_ENV_VARS = (
     "TELEGRAM_BOT_TOKEN",
     "TELEGRAM_CHAT_IDS",
-    "ETHERSCAN_API_KEY",
 )
 
 logger = logging.getLogger("web3_compliance_bridge")
@@ -72,21 +71,25 @@ def build_notification(alert: Mapping[str, Any], dossier_path: Path) -> str:
     enrichment = alert.get("enrichment") or {}
     subject = alert.get("subject") or {}
     remaining = enrichment.get("hours_to_deadline")
-    hours = "unknown" if remaining is None else remaining
+    if remaining is None:
+        deadline_state = "unknown"
+    elif remaining > 0:
+        deadline_state = f"{remaining} h remaining"
+    else:
+        deadline_state = f"expired {abs(remaining)} h ago"
 
     return "\n".join(
         [
-            "WACB — New MOCK Alert",
+            "WACB — New MOCK alert",
             f"ID: {alert.get('alert_id')}",
             f"Typology: {alert.get('typology')}",
             f"Score: {alert.get('score')}/100 ({enrichment.get('risk_band', '—')})",
             f"Entity: {subject.get('entity', '—')}",
             f"Jurisdiction: {subject.get('jurisdiction', '—')}",
-            f"48h window: {hours} hours left",
+            f"48h window: {deadline_state}",
             f"Dossier: {dossier_path}",
             "",
-            "Fake data (MOCK). Requires human review.",
-            "",
+            "Fictitious data (MOCK). Requires human review.",
             "⚡ Powered by PhishNet | 30+ scams caught.",
         ]
     )
@@ -103,8 +106,8 @@ def _notify(artifacts: list[tuple[dict[str, Any], Path]]) -> int:
     chat_ids = os.getenv("TELEGRAM_CHAT_IDS", "").strip()
     if not token or not chat_ids:
         logger.error(
-            "Telegram no está configurado: define TELEGRAM_BOT_TOKEN y "
-            "TELEGRAM_CHAT_IDS, o ejecuta con --skip-notify."
+            "Telegram is not configured: set TELEGRAM_BOT_TOKEN and "
+            "TELEGRAM_CHAT_IDS, or run with --skip-notify."
         )
         return 1
 
@@ -113,15 +116,15 @@ def _notify(artifacts: list[tuple[dict[str, Any], Path]]) -> int:
     for alert, dossier_path in artifacts:
         results = notifier.send(build_notification(alert, dossier_path))
         if not results:
-            logger.warning("No hay destinatarios de Telegram configurados.")
+            logger.warning("No Telegram recipients configured.")
             continue
         for result in results:
             if result.ok:
-                logger.info("Notificación enviada a %s.", result.recipient)
+                logger.info("Notification sent to %s.", result.recipient)
             else:
                 failures += 1
                 logger.error(
-                    "Falló la notificación a %s: %s", result.recipient, result.error
+                    "Failed to notify %s: %s", result.recipient, result.error
                 )
 
     return 1 if failures else 0
@@ -149,13 +152,13 @@ def run_demo(
         )
         artifacts.append((alert, dossier_path))
         logger.info(
-            "Dossier generado para %s: %s", alert.get("alert_id"), dossier_path
+            "Dossier generated for %s: %s", alert.get("alert_id"), dossier_path
         )
 
-    logger.info("%d dossier(s) generados en %s.", len(artifacts), output_dir)
+    logger.info("%d dossier(s) generated in %s.", len(artifacts), output_dir)
 
     if skip_notify:
-        logger.info("Notificación de Telegram omitida (--skip-notify).")
+        logger.info("Telegram notification skipped (--skip-notify).")
         return 0
 
     return _notify(artifacts)
@@ -171,6 +174,10 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     load_dotenv(BASE_DIR / ".env")
+
+    for name, present in check_environment().items():
+        if not present:
+            logger.warning("Missing environment variable: %s", name)
 
     if args.command == "demo":
         try:

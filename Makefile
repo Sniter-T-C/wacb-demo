@@ -1,4 +1,4 @@
-.PHONY: run-demo test
+.PHONY: install test run-demo
 
 PYTHON ?= python
 PIP ?= $(PYTHON) -m pip

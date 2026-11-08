@@ -1,4 +1,4 @@
-"""Enriquecimiento simulado para las alertas MOCK de la demo."""
+"""Mock enrichment for the demo's MOCK alerts."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ RISK_BANDS = (
 
 
 def risk_band(score: int) -> str:
-    """Devuelve la banda de riesgo asociada a un score 1-100."""
+    """Return the risk band associated with a 1-100 score."""
     for upper_bound, label in RISK_BANDS:
         if score <= upper_bound:
             return label
@@ -29,21 +29,20 @@ def _parse_timestamp(value: Any, field: str) -> datetime:
         try:
             parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
         except ValueError as exc:
-            raise ValueError(f"{field}: timestamp ISO 8601 inválido ({value!r}).") from exc
+            raise ValueError(f"{field}: invalid ISO 8601 timestamp ({value!r}).") from exc
     else:
-        raise ValueError(f"{field}: se esperaba un timestamp ISO 8601.")
+        raise ValueError(f"{field}: an ISO 8601 timestamp was expected.")
 
     if parsed.tzinfo is None:
-        raise ValueError(f"{field}: el timestamp debe incluir zona horaria.")
+        raise ValueError(f"{field}: the timestamp must include a timezone.")
     return parsed.astimezone(timezone.utc)
 
 
 class MockEnricher:
-    """Añade contexto derivado a una alerta sin consultar fuentes externas.
+    """Add derived context to an alert without querying external sources.
 
-    El resultado conserva todos los campos originales y agrega un bloque
-    ``enrichment`` con la banda de riesgo, el estado de la ventana de 48 h y
-    métricas on-chain agregadas.
+    The result keeps every original field and adds an ``enrichment`` block with
+    the risk band, the 48 h window state and aggregated on-chain metrics.
     """
 
     provider = "mock"
@@ -60,7 +59,7 @@ class MockEnricher:
 
         score = alert.get("score")
         if isinstance(score, bool) or not isinstance(score, int) or not 1 <= score <= 100:
-            raise ValueError("El score debe ser un entero entre 1 y 100.")
+            raise ValueError("The score must be an integer between 1 and 100.")
 
         detected_at = _parse_timestamp(alert.get("detected_at"), "detected_at")
         deadline = _parse_timestamp(alert.get("deadline_48h"), "deadline_48h")
@@ -72,7 +71,7 @@ class MockEnricher:
             "provider": self.provider,
             "as_of": self.as_of.isoformat().replace("+00:00", "Z"),
             "risk_band": risk_band(score),
-            "alarm_status": "activa" if remaining_hours > 0 else "vencida",
+            "alarm_status": "active" if remaining_hours > 0 else "expired",
             "hours_to_deadline": remaining_hours,
             "detected_at": detected_at.isoformat().replace("+00:00", "Z"),
             "deadline_48h": deadline.isoformat().replace("+00:00", "Z"),

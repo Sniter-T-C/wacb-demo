@@ -51,7 +51,7 @@ def test_dossier_renders_alert_metadata_and_score(payload, alert):
     assert "pig_butchering" in markdown
     assert "86%" in markdown
     assert "87/100" in markdown
-    assert "Critical" in markdown
+    assert "Crítico" in markdown
 
 
 def test_dossier_renders_mock_onchain_summary(payload, alert):
