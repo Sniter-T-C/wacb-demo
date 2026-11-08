@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import copy
-from datetime import datetime, timezone
-from typing import Any, Mapping
+from collections.abc import Mapping
+from datetime import UTC, datetime
+from typing import Any
 
 RISK_BANDS = (
     (20, "Low"),
@@ -35,7 +36,7 @@ def _parse_timestamp(value: Any, field: str) -> datetime:
 
     if parsed.tzinfo is None:
         raise ValueError(f"{field}: the timestamp must include a timezone.")
-    return parsed.astimezone(timezone.utc)
+    return parsed.astimezone(UTC)
 
 
 class MockEnricher:
@@ -51,7 +52,7 @@ class MockEnricher:
         self.as_of = (
             _parse_timestamp(as_of, "as_of")
             if as_of is not None
-            else datetime.now(timezone.utc)
+            else datetime.now(UTC)
         )
 
     def enrich(self, alert: Mapping[str, Any]) -> dict[str, Any]:
